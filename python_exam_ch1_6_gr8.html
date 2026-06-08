@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Quiz Test 2</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #08080e;
+  --surface:  #0f0f1a;
+  --surface2: #161622;
+  --border:   #1e1e2e;
+  --border2:  #2a2a40;
+  --text:     #e4e4f0;
+  --muted:    #45456a;
+  --muted2:   #6868a0;
+  --green:    #4ade80;
+  --red:      #f87171;
+  --amber:    #fbbf24;
+
+  /* chapter accent per task */
+  --c1: #f5c542;
+  --c2: #ff6b6b;
+  --c3: #4eebb5;
+  --c4: #a78bfa;
+  --c5: #38bdf8;
+  --c6: #facc15;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;font-size:14px;}
+
+/* grid bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,8,14,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  height:58px;
+}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.hdr-logo{font-size:22px;line-height:1;}
+.hdr-titles{display:flex;flex-direction:column;gap:2px;}
+.hdr-title{
+  font-family:'Syne',sans-serif;font-weight:900;font-size:1rem;
+  letter-spacing:-.4px;line-height:1;
+}
+.hdr-title .hi{color:#a78bfa;}
+.hdr-sub{font-size:9px;letter-spacing:2px;color:var(--muted2);}
+.hdr-pills{display:flex;align-items:center;gap:8px;}
+.pill{font-size:9px;letter-spacing:1.5px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted2);white-space:nowrap;}
+.pill.hi{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.08);color:#a78bfa;}
+
+/* ── NOTICE ── */
+.notice-banner{position:relative;z-index:1;margin:28px auto 0;max-width:900px;padding:0 24px;}
+.notice-inner{
+  background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.25);
+  border-radius:10px;padding:16px 20px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.notice-icon{font-size:20px;flex-shrink:0;line-height:1.4;}
+.notice-text{font-size:.77rem;font-weight:300;color:var(--muted2);line-height:1.85;}
+.notice-text strong{color:var(--text);font-weight:500;}
+.notice-text code{color:#a78bfa;background:rgba(167,139,250,.1);padding:1px 6px;border-radius:3px;font-size:.76rem;}
+
+/* ── MAIN ── */
+main{max-width:900px;margin:0 auto;padding:28px 24px 100px;position:relative;z-index:1;}
+
+/* ── SECTION HEADER ── */
+.section-hdr{display:flex;align-items:center;gap:14px;margin:36px 0 20px;}
+.section-hdr::before,.section-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-hdr span{
+  font-size:9px;letter-spacing:3px;white-space:nowrap;
+  padding:4px 16px;border-radius:4px;
+}
+
+/* ── TASK CARD ── */
+.task-card{
+  border:1px solid var(--border);border-radius:14px;
+  background:var(--surface);margin-bottom:24px;overflow:hidden;
+  transition:border-color .25s;
+}
+.task-card:hover{border-color:var(--border2);}
+
+.task-head{
+  padding:16px 20px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.task-num{
+  font-size:9px;letter-spacing:1.5px;padding:4px 10px;border-radius:4px;
+  flex-shrink:0;margin-top:2px;
+}
+.task-meta{flex:1;}
+.task-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;
+  letter-spacing:-.3px;color:var(--text);margin-bottom:5px;
+}
+.task-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.tag{font-size:9px;letter-spacing:1.5px;padding:3px 9px;border-radius:100px;}
+.tag-marks{color:#a78bfa;border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.07);}
+.tag-ch{color:var(--muted2);border:1px solid var(--border2);background:var(--surface2);}
+.tag-topic{color:var(--muted2);border:1px solid var(--border2);background:var(--surface2);}
+
+.task-body{padding:20px;}
+.task-desc{font-size:.8rem;font-weight:300;color:var(--muted2);line-height:1.9;margin-bottom:18px;}
+.task-desc strong{color:var(--text);font-weight:500;}
+.task-desc code{font-size:.77rem;color:#a78bfa;background:rgba(167,139,250,.1);padding:1px 6px;border-radius:3px;}
+
+/* steps */
+.steps{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px;}
+.steps li{display:flex;gap:12px;align-items:flex-start;font-size:.79rem;font-weight:300;color:var(--muted2);line-height:1.75;}
+.step-num{
+  flex-shrink:0;width:20px;height:20px;border-radius:50%;
+  font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin-top:2px;
+}
+.steps li strong{color:var(--text);font-weight:500;}
+.steps li code{font-size:.76rem;color:#a78bfa;background:rgba(167,139,250,.1);padding:1px 5px;border-radius:3px;}
+
+/* expected output */
+.expected-wrap{border:1px solid rgba(74,222,128,.2);border-radius:8px;overflow:hidden;margin-bottom:18px;}
+.expected-top{padding:7px 14px;border-bottom:1px solid rgba(74,222,128,.15);background:rgba(74,222,128,.04);font-size:9px;letter-spacing:2px;color:var(--green);}
+pre.expected{padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:.77rem;line-height:1.9;color:var(--green);background:rgba(0,0,0,.25);overflow-x:auto;opacity:.85;}
+
+/* hint box */
+.hint-wrap{
+  display:flex;gap:10px;align-items:flex-start;
+  background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);
+  border-radius:8px;padding:12px 14px;
+  font-size:.76rem;font-weight:300;color:var(--muted2);line-height:1.7;margin-top:4px;
+}
+.hint-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.hint-wrap strong{color:var(--amber);font-weight:500;}
+.hint-wrap code{color:#a78bfa;background:rgba(167,139,250,.1);padding:1px 5px;border-radius:3px;font-size:.75rem;}
+
+/* ── TASK DIVIDER ── */
+.task-divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="hdr-left">
+    <div class="hdr-logo">🎓</div>
+    <div class="hdr-titles">
+      <div class="hdr-title">Python <span class="hi">Quiz Test </span> 2</div>
+      <div class="hdr-sub">CHAPTERS 01 – 06</div>
+    </div>
+  </div>
+  <div class="hdr-pills">
+    <span class="pill hi">50 MARKS</span>
+    <span class="pill">6 TASKS</span>
+    <span class="pill">GRADE 8</span>
+  </div>
+</header>
+
+<!-- ── NOTICE ── -->
+<div class="notice-banner">
+  <div class="notice-inner">
+    <div class="notice-icon">📋</div>
+    <div class="notice-text"><strong>How to submit your answers:</strong> Write your Python code in the editor (Thonny) or an online Python compiler. When you are done with all tasks, <strong>copy your code and paste it</strong> into the corresponding question in Google Forms. Do not close this page — use it as your question sheet throughout the exam.
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ════════════════════════════════════════
+     TASK 1 — CH.1  Variables & Arithmetic
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c1);border:1px solid rgba(245,197,66,.3);background:rgba(245,197,66,.07);">CHAPTER 01 · HELLO WORLD</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c1);background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.2);">TASK 01</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">9 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.25);color:var(--c1);">1</div>
+        <span>Create a variable <code>name</code> and assign it your full name as a string. <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.25);color:var(--c1);">2</div>
+        <span>Create a variable <code>grade</code> and assign it the integer <code>8</code>. <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.25);color:var(--c1);">3</div>
+        <span>Create a variable <code>score_math</code> (<code>67</code>), <code>score_english</code> (<code>74</code>), and <code>score_ict</code> (<code>90</code>). <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.25);color:var(--c1);">4</div>
+        <span>Calculate the <code>average</code> of the three scores (divide their sum by 3). <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.25);color:var(--c1);">5</div>
+        <span>Print the student card exactly as shown in the expected output below. Use <code>print()</code> for each line. <strong>(4 marks)</strong></span>
+      </li>
+    </ul>
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT</div>
+      <pre class="expected">
+Name: Alex Doe
+Grade: 8
+Scores: 67 74 90
+Average: 77</pre>
+    </div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint —</strong> The average of 87+74+91 = 231 ÷ 3 = <code>77</code>.</div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TASK 2 — CH.2  Control Flow
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c2);border:1px solid rgba(255,107,107,.3);background:rgba(255,107,107,.07);">CHAPTER 02 · CONTROL FLOW</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c2);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);">TASK 02</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">7 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:var(--c2);">1</div>
+        <span>Create a variable <code>score</code> and assign it the value <code>73</code>. <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:var(--c2);">2</div>
+        <span>Use <code>if / elif / else</code> to print the grade: <code>90+</code> → <strong>A</strong>, <code>75–89</code> → <strong>B</strong>, <code>60–74</code> → <strong>C</strong>, <code>below 60</code> → <strong>F</strong>. <strong>(6 marks)</strong></span>
+      </li>
+    </ul>
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT (score = 73)</div>
+      <pre class="expected">Score: 73
+Grade: C</pre>
+    </div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint —</strong> Use <code>elif score &gt;= 75</code> for B, <code>elif score &gt;= 60</code> for C, and <code>else</code> for F.</div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TASK 3 — CH.3  Lists
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c3);border:1px solid rgba(78,235,181,.3);background:rgba(78,235,181,.07);">CHAPTER 03 · LISTS</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c3);background:rgba(78,235,181,.08);border:1px solid rgba(78,235,181,.2);">TASK 03</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">8 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(78,235,181,.1);border:1px solid rgba(78,235,181,.25);color:var(--c3);">1</div>
+        <span>Create a list called <code>register</code> containing: <code>"Ana"</code>, <code>"Bogdan"</code>, <code>"Crina"</code>, <code>"Dan"</code>, <code>"Elena"</code>. <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(78,235,181,.1);border:1px solid rgba(78,235,181,.25);color:var(--c3);">2</div>
+        <span>Use <code>.append()</code> to add <code>"Florin"</code> to the list. <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(78,235,181,.1);border:1px solid rgba(78,235,181,.25);color:var(--c3);">3</div>
+        <span>Use <code>.remove()</code> to remove <code>"Crina"</code> (she transferred to another school). <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(78,235,181,.1);border:1px solid rgba(78,235,181,.25);color:var(--c3);">4</div>
+        <span>Print the first and last student using indexing. <strong>(3 marks)</strong></span>
+      </li>
+    </ul>
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT</div>
+      <pre class="expected">Students: 5
+First: Ana
+Last: Florin</div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint —</strong> Use <code>register[0]</code> for the first and <code>register[-1]</code> for the last.</div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TASK 4 — CH.4  Loops
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c4);border:1px solid rgba(167,139,250,.3);background:rgba(167,139,250,.07);">CHAPTER 04 · LOOPS</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c4);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);">TASK 04</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">9 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);color:var(--c4);">1</div>
+        <span>Create a list: <code>students = ["Irina", "Mihai", "Viorel", "Gabriel", "Gina"]</code>. <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);color:var(--c4);">2</div>
+        <span>Use a <code>for</code> loop to print each student's attendance line exactly as shown. <strong>(4 marks)</strong></span>
+      </li>
+    </ul>
+
+    <div class="task-divider"></div>
+
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT</div>
+      <pre class="expected">Irina - Present
+Mihai - Present
+Viorel - Present
+Gabriel - Present
+Gina - Present</pre>
+    </div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint — </strong>use print(student + " - Present")</code> inside the loop.</div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TASK 5 — CH.5  Functions
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c5);border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.07);">CHAPTER 05 · FUNCTIONS</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c5);background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);">TASK 05</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">9 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--c5);">1</div>
+        <span>Define a function <code>report_card(name, score)</code>. <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--c5);">2</div>
+        <span>Use <code>print</code> to print a string in the format shown below. <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--c5);">3</div>
+        <span>Call the function twice: once with <code>("Maria", 88)</code> and once with <code>("Vlad", 55)</code>. <strong>(3 marks)</strong></span>
+      </li>
+    </ul>
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT</div>
+      <pre class="expected">Maria - Score: 88
+Vlad - Score: 55</pre>
+    </div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint —</strong> Print the string using concatenation: <code>name + " - Score: " + str(score)</code>.</div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TASK 6 — CH.6  Strings
+════════════════════════════════════════ -->
+<div class="section-hdr"><span style="color:var(--c6);border:1px solid rgba(250,204,21,.3);background:rgba(250,204,21,.07);">CHAPTER 06 · STRINGS</span></div>
+
+<div class="task-card">
+  <div class="task-head">
+    <div class="task-num" style="color:var(--c6);background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);">TASK 06</div>
+    <div class="task-meta">
+      <div class="task-tags">
+        <span class="tag tag-marks">8 MARKS</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-body">
+    <ul class="steps">
+      <li>
+        <div class="step-num" style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);color:var(--c6);">1</div>
+        <span>Create a variable: <code>raw_name = "  ioana popescu  "</code> (note the extra spaces). <strong>(1 mark)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);color:var(--c6);">2</div>
+        <span>Use <code>.strip()</code> then <code>.title()</code> to produce a clean, properly-capitalised name. Store it as <code>clean_name</code>. <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);color:var(--c6);">3</div>
+        <span>Use <code>.split()</code> to separate the <code>clean_name</code> into a list. <strong>(2 marks)</strong></span>
+      </li>
+      <li>
+        <div class="step-num" style="background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);color:var(--c6);">4</div>
+        <span>Print the clean name, the list, and the total character length of the clean name. <strong>(1 mark)</strong></span>
+      </li>
+    </ul>
+
+    <div class="expected-wrap">
+      <div class="expected-top">▶ EXPECTED OUTPUT</div>
+      <pre class="expected">Ioana Popescu
+['Ioana', 'Popescu']
+13</pre>
+    </div>
+
+    <div class="hint-wrap">
+      <div class="hint-icon">💡</div>
+      <div><strong>Hint —</strong> Chain the methods: <code>clean_name = raw_name.strip().title()</code>. </div>
+    </div>
+      </div>
+</div>
+  </div>
+</div>
+
+</main>
+
+</body>
+</html>
